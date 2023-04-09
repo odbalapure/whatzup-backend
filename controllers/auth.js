@@ -28,7 +28,7 @@ const register = async (req, res) => {
       from: "ombalapure@outlook.com",
       subject: "Whatzup - Email Confirmation",
       html: `<h4>Hi ${user.name}! Please click the below link for email confirmation.</h4>
-      <p>Confirm email for <a href="https://whatzzzup.herokuapp.com/api/v1/auth/confirm/${token}">${user.email}</a></p>
+      <p>Confirm email for <a href="https://whaztup.netlify.app/api/v1/auth/confirm/${token}">${user.email}</a></p>
     `,
     });
 
@@ -121,7 +121,7 @@ const forgotPassword = async (req, res) => {
     from: "ombalapure@outlook.com",
     subject: "Whatzup - Password Reset",
     html: `<h4>Hi ${user.name}! Please click the below link to reset your password.</h4>
-      <p>Confirm email for <a href="https://whatzzzup.herokuapp.com/reset-password/${user.email}">${user.email}</a></p>
+      <p>Confirm email for <a href="https://whaztup.netlify.app/reset-password/${user.email}">${user.email}</a></p>
     `,
   });
 
