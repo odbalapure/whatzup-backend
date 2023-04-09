@@ -4,31 +4,12 @@ require("express-async-errors");
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const redis = require("redis");
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "*"
   }
 });
-
-// Redis client
-const client = redis.createClient(6379);
-client.on("error", (err) => {
-  console.log("REDIS INIT ERROR:", err);
-});
-
-const checkCache = (req, res, next) => {
-  let search = req.params.search;
-  client.get(search, (err, data) => {
-    if (err) throw err;
-    if (!data) {
-      return next();
-    } else {
-      return res.json({ data: JSON.parse(data), info: "data from cache" });
-    }
-  });
-};
 
 // Db connection
 const connectDb = require("./db/connect");
@@ -57,7 +38,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/announcements", checkCache, announcementsRouter);
+app.use("/api/v1/announcements", announcementsRouter);
 app.use("/api/v1/events", eventsRouter);
 app.use(notFoundMiddleware);
 
