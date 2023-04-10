@@ -1,6 +1,6 @@
 const Announcement = require("../models/Announcement");
 const { checkCache } = require("../utils/common");
-const client = require('../utils/redis');
+const client = require("../utils/redis");
 
 /**
  * @desc Get all announcements
@@ -12,9 +12,9 @@ const getAllAnnouncements = async (req, res) => {
     checkCache(req, res, client, Announcement);
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ msg: "Something went wrong while getting this announcements..." });
+    return res.status(500).json({
+      msg: "Something went wrong while getting this announcements..."
+    });
   }
 };
 
@@ -25,8 +25,7 @@ const getAllAnnouncements = async (req, res) => {
  */
 const getUrgentAnnouncements = async (req, res) => {
   try {
-    const urgentAnnoucements = await Announcement.find({ importance: "HIGH" });
-    checkCache(req, res, client, urgentAnnoucements);
+    checkCache(req, res, client, Announcement, { importance: "HIGH" });
   } catch (err) {
     return res
       .status(500)

@@ -1,4 +1,4 @@
-const checkCache = async (req, res, client, model) => {
+const checkCache = async (req, res, client, model, query = {}) => {
   if (!req.originalUrl) {
     res.status(201).json({ dbData });
   }
@@ -7,7 +7,7 @@ const checkCache = async (req, res, client, model) => {
   if (cache) {
     res.status(201).json(JSON.parse(cache));
   } else {
-    const data = await model.find();
+    const data = await model.find(query);
     client.set(key, JSON.stringify(data));
     res.status(201).json(data);
   }
