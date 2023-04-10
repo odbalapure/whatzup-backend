@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "nodemailer": "^6.7.2",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "rate-limiter": "^0.2.0",
+    "redis": "^4.6.5",
     "socket.io": "^4.4.1",
     "swagger-ui-express": "^4.1.6",
     "xss-clean": "^0.1.1",

@@ -1,4 +1,6 @@
 const Announcement = require("../models/Announcement");
+const { checkCache } = require("../utils/common");
+const client = require('../utils/redis');
 
 /**
  * @desc Get all announcements
@@ -7,12 +9,12 @@ const Announcement = require("../models/Announcement");
  */
 const getAllAnnouncements = async (req, res) => {
   try {
-    const announcements = await Announcement.find();
-    res.status(200).json({ announcements });
+    checkCache(req, res, client, Announcement);
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
-      .json({ msg: "Something went wrong while getting this announcement..." });
+      .json({ msg: "Something went wrong while getting this announcements..." });
   }
 };
 
@@ -24,7 +26,7 @@ const getAllAnnouncements = async (req, res) => {
 const getUrgentAnnouncements = async (req, res) => {
   try {
     const urgentAnnoucements = await Announcement.find({ importance: "HIGH" });
-    res.status(200).json({ announcements: urgentAnnoucements });
+    checkCache(req, res, client, urgentAnnoucements);
   } catch (err) {
     return res
       .status(500)
@@ -59,11 +61,9 @@ const deleteAnnouncement = async (req, res) => {
     await Announcement.findByIdAndDelete({ _id: req.params.id });
     res.status(204).json({ msg: "Annocument deleted!" });
   } catch (err) {
-    return res
-      .status(500)
-      .json({
-        msg: "Something went wrong while deleting this announcement..."
-      });
+    return res.status(500).json({
+      msg: "Something went wrong while deleting this announcement..."
+    });
   }
 };
 

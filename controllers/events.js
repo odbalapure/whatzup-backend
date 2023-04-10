@@ -1,4 +1,6 @@
 const Event = require("../models/Event");
+const { checkCache } = require("../utils/common");
+const client = require("../utils/redis");
 
 /**
  * @desc Get all events
@@ -7,12 +9,11 @@ const Event = require("../models/Event");
  */
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();
-    res.status(201).json({ events });
+    checkCache(req, res, client, Event);
   } catch (err) {
     return res
       .status(500)
-      .json({ msg: "Something went wrong while creating announcement..." });
+      .json({ msg: "Something went wrong while fetching events..." });
   }
 };
 
@@ -101,7 +102,7 @@ const editEvent = async (req, res) => {
   try {
     await Event.findOneAndUpdate({ _id: req.params.id }, req.body, {
       new: true,
-      runValidators: true,
+      runValidators: true
     });
 
     res.status(203).json({ msg: "Event edited!" });
@@ -118,5 +119,5 @@ module.exports = {
   createComment,
   getEventComments,
   deleteEvent,
-  editEvent,
+  editEvent
 };
