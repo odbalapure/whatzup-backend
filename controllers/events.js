@@ -1,6 +1,4 @@
 const Event = require("../models/Event");
-const { checkCache } = require("../utils/checkCacheGetAll");
-const client = require("../utils/redis");
 
 /**
  * @desc Get all events
@@ -9,7 +7,8 @@ const client = require("../utils/redis");
  */
 const getAllEvents = async (req, res) => {
   try {
-    checkCache(req, res, client, Event);
+    const events = await Event.find();
+    res.status(201).json(events);
   } catch (err) {
     return res
       .status(500)

@@ -1,6 +1,4 @@
 const Announcement = require("../models/Announcement");
-const { checkCache } = require("../utils/common");
-const client = require("../utils/redis");
 
 /**
  * @desc Get all announcements
@@ -9,7 +7,8 @@ const client = require("../utils/redis");
  */
 const getAllAnnouncements = async (req, res) => {
   try {
-    checkCache(req, res, client, Announcement);
+    const annoucements = await Announcement.find();
+    res.status(201).json(annoucements);
   } catch (err) {
     console.log(err);
     return res.status(500).json({
