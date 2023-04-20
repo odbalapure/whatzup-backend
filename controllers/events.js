@@ -1,5 +1,5 @@
 const Event = require("../models/Event");
-const { checkCache } = require("../utils/common");
+const { checkCache } = require("../utils/checkCacheGetAll");
 const client = require("../utils/redis");
 
 /**

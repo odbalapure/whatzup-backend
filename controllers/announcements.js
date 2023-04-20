@@ -25,7 +25,8 @@ const getAllAnnouncements = async (req, res) => {
  */
 const getUrgentAnnouncements = async (req, res) => {
   try {
-    checkCache(req, res, client, Announcement, { importance: "HIGH" });
+    const urgentAnnouncements = await Announcement.find({ importance: "HIGH" });
+    res.status(201).json(urgentAnnouncements);
   } catch (err) {
     return res
       .status(500)
