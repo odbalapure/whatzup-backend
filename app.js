@@ -7,8 +7,8 @@ const app = express();
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "*",
-  },
+    origin: "*"
+  }
 });
 
 // Db connection
@@ -18,14 +18,16 @@ const connectDb = require("./db/connect");
 const authRouter = require("./routes/auth");
 const announcementsRouter = require("./routes/announcements");
 const eventsRouter = require("./routes/events");
+const messagesRouter = require("./routes/messages");
 
 // Error handlers
 const notFoundMiddleware = require("./middleware/not-found");
+const Message = require("./models/Message");
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 // Routes
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.send(`
       <h1>Whatzup!</h1>
       <div>
@@ -40,17 +42,16 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/announcements", announcementsRouter);
 app.use("/api/v1/events", eventsRouter);
+app.use("/api/v1/messages", messagesRouter)
 app.use(notFoundMiddleware);
 
 /* ============================================================= */
 
-const messages = [];
+let messages = [];
 const port = process.env.PORT || 5000;
 
-/* Handle connections and messagesF */
+/* Handle connections and messages */
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
   /* User connected */
   socket.on("join_room", (data) => {
     socket.join(data);
@@ -60,14 +61,16 @@ io.on("connection", (socket) => {
   /* Inform client about new messages */
   socket.on("send_msg", (data) => {
     messages.push(data);
-    console.log('Messages array', messages);
     // Mention the room to which msg needs to sent
-    socket.to(data.room).emit("recieve_msg", data);
+    socket.to(data.eventId).emit("recieve_msg", data);
   });
 
   /* User disconnected */
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id, messages);
+  socket.on("disconnect", async () => {
+    if (messages?.length > 0) {
+      await Message.insertMany(messages);
+      setTimeout(() => (messages = []), 2000);
+    }
   });
 });
 
