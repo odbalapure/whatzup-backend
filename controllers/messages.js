@@ -8,7 +8,6 @@ const Message = require("../models/Message");
 const getAllMessagesInEvent = async (req, res) => {
   try {
     const messages = await Message.find({ eventId: req.params.id });
-    console.log('MESSAGES:', messages, req.params.id);
     res.status(200).json({ messages });
   } catch (err) {
     return res

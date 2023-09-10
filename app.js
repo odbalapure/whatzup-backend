@@ -42,7 +42,7 @@ app.get("/", (_, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/announcements", announcementsRouter);
 app.use("/api/v1/events", eventsRouter);
-app.use("/api/v1/messages", messagesRouter)
+app.use("/api/v1/messages", messagesRouter);
 app.use(notFoundMiddleware);
 
 /* ============================================================= */
@@ -56,6 +56,14 @@ io.on("connection", (socket) => {
   socket.on("join_room", (data) => {
     socket.join(data);
     console.log(`User with id ${socket.id} joined room ${data}`);
+    if (messages?.length > 0) {
+      Message.insertMany(messages).then((data) => {
+        if (data) {
+          console.log("data", data);
+          messages = [];
+        }
+      });
+    }
   });
 
   /* Inform client about new messages */
@@ -68,8 +76,12 @@ io.on("connection", (socket) => {
   /* User disconnected */
   socket.on("disconnect", async () => {
     if (messages?.length > 0) {
-      await Message.insertMany(messages);
-      setTimeout(() => (messages = []), 2000);
+      Message.insertMany(messages).then((data) => {
+        if (data) {
+          console.log("data", data);
+          messages = [];
+        }
+      });
     }
   });
 });
