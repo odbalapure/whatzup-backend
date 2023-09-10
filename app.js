@@ -44,6 +44,7 @@ app.use(notFoundMiddleware);
 
 /* ============================================================= */
 
+const messages = [];
 const port = process.env.PORT || 5000;
 
 /* Handle connections and messagesF */
@@ -58,14 +59,15 @@ io.on("connection", (socket) => {
 
   /* Inform client about new messages */
   socket.on("send_msg", (data) => {
-    console.log(data);
+    messages.push(data);
+    console.log('Messages array', messages);
     // Mention the room to which msg needs to sent
     socket.to(data.room).emit("recieve_msg", data);
   });
 
   /* User disconnected */
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log("User disconnected:", socket.id, messages);
   });
 });
 
