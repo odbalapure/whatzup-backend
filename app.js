@@ -78,7 +78,6 @@ io.on("connection", (socket) => {
     if (messages?.length > 0) {
       Message.insertMany(messages).then((data) => {
         if (data) {
-          console.log("data", data);
           messages = [];
         }
       });
